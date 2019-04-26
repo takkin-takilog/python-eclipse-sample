@@ -1,5 +1,6 @@
 # ==============================================================================
 # brief        OANDA Pricing Stream
+#              リアルタイムで為替レート値を取得する。
 #
 # author       たっきん
 #
@@ -7,7 +8,6 @@
 #     oandapyV20のインストール (pip install oandapyV20)
 # ==============================================================================
 
-# ライブラリのインポート
 import json
 from oandapyV20 import API
 from oandapyV20.endpoints.pricing import PricingStream
