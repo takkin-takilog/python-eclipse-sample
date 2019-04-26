@@ -87,12 +87,12 @@ class CandleStick(object):
         self.__api = API(access_token=ya.access_token,
                          environment=oc.OandaEnv.PRACTICE)
 
-    def getInstrumentsCandles(self, instrument, datetime_from, datetime_to):
+    def getInstrumentsCandles(self, instrument, dt_from, dt_to):
 
         params = {
             "alignmentTimezone": "Japan",
-            "from": datetime_from.strftime(self.__DT_FMT),
-            "to": datetime_to.strftime(self.__DT_FMT),
+            "from": dt_from.strftime(self.__DT_FMT),
+            "to": dt_to.strftime(self.__DT_FMT),
             "granularity": self.__GRANULARITY
         }
 
@@ -315,9 +315,9 @@ if __name__ == "__main__":
     cs = CandleStick(oc.OandaGrn.D)
 
     instrument = oc.OandaIns.USD_JPY
-    datetime_from = datetime.datetime(year=2018, month=1, day=1, hour=0,
-                                      minute=0, second=0)
-    datetime_to = datetime.datetime(year=2019, month=2, day=1, hour=12,
-                                    minute=0, second=0)
-    cs.getInstrumentsCandles(instrument, datetime_from, datetime_to)
+    dt_from = datetime.datetime(
+        year=2018, month=1, day=1, hour=0, minute=0, second=0)
+    dt_to = datetime.datetime(
+        year=2019, month=2, day=1, hour=12, minute=0, second=0)
+    cs.getInstrumentsCandles(instrument, dt_from, dt_to)
     cs.drawCandleStick()
