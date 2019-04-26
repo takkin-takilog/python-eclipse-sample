@@ -8,6 +8,7 @@
 #     Bokehのインストール（conda install bokeh）
 # ==============================================================================
 
+import copy
 import datetime
 from math import pi
 
@@ -15,8 +16,8 @@ from bokeh.layouts import Column
 from bokeh.models import RangeTool
 from bokeh.plotting import figure, show, output_file
 from oandapyV20 import API
-from bokehlib import bokeh_common as bc
 
+from bokehlib import bokeh_common as bc
 from fx import oanda_common as oc
 from fx import your_account as ya
 import oandapyV20.endpoints.instruments as instruments
@@ -26,10 +27,12 @@ import pandas as pd
 class CandleStick(object):
     """ CandleStick - ローソク足定義クラス。"""
 
-    def __init__(self):
+    def __init__(self, granularity):
         """"コンストラクタ
-        引数：
-            なし
+        引数:
+            dt (str): datetime formatted by DT_FMT.
+        戻り値:
+            tf_dt (str): changed datetime.
         """
 
         self.__CANDLES = "candles"
@@ -47,25 +50,36 @@ class CandleStick(object):
         self.__CLOSE = "close"
 
         self.__WIDE = 12 * 60 * 60 * 1000  # half day in ms
-
         self.__WIDE_SCALE = 0.2
+
+        self.__SMA1PRD = 5
+        self.__SMA2PRD = 20
+        self.__SMA3PRD = 75
+
+        self.__SMA1COL = "SMA-" + str(self.__SMA1PRD)
+        self.__SMA2COL = "SMA-" + str(self.__SMA2PRD)
+        self.__SMA3COL = "SMA-" + str(self.__SMA3PRD)
 
         self.__BG_COLOR = "#2e2e2e"
         self.__CND_INC_COLOR = "#e73b3a"
         self.__CND_DEC_COLOR = "#03c103"
         self.__CND_EQU_COLOR = "#ffff00"
+        self.__DT_FMT = "%Y-%m-%dT%H:%M:00.000000000Z"
+
+        self.__GRANULARITY = granularity
+
+        self.__df = []
 
         self.__api = API(access_token=ya.access_token,
-                         environment=oc.OANDA_ENV.PRACTICE)
+                         environment=oc.OandaEnv.PRACTICE)
 
-    def drawCandleStick(self, instrument, datetime_from, datetime_to,
-                        granularity, fig_width=1000):
+    def getInstrumentsCandles(self, instrument, datetime_from, datetime_to):
 
         params = {
             "alignmentTimezone": "Japan",
-            "from": datetime_from,
-            "to": datetime_to,
-            "granularity": granularity
+            "from": datetime_from.strftime(self.__DT_FMT),
+            "to": datetime_to.strftime(self.__DT_FMT),
+            "granularity": self.__GRANULARITY
         }
 
         # APIへ過去データをリクエスト
@@ -75,7 +89,7 @@ class CandleStick(object):
 
         self.__data = []
         for raw in ic.response[self.__CANDLES]:
-            self.__data.append([raw[self.__TIME],
+            self.__data.append([self.__changeDateTimeFmt(raw[self.__TIME]),
                                 raw[self.__VOLUME],
                                 raw[self.__MID][self.__O],
                                 raw[self.__MID][self.__H],
@@ -94,7 +108,19 @@ class CandleStick(object):
         # date型を整形する
         df.index = pd.to_datetime(df.index)
 
-        print(df)
+        # 移動平均線
+        df[self.__SMA1COL] = df[self.__CLOSE].rolling(
+            window=self.__SMA1PRD).mean()
+        df[self.__SMA2COL] = df[self.__CLOSE].rolling(
+            window=self.__SMA2PRD).mean()
+        df[self.__SMA3COL] = df[self.__CLOSE].rolling(
+            window=self.__SMA3PRD).mean()
+
+        self.__df = copy.copy(df)
+
+    def drawCandleStick(self, fig_width=1000):
+
+        df = copy.copy(self.__df)
 
         inc = df[self.__CLOSE] > df[self.__OPEN]
         dec = df[self.__OPEN] > df[self.__CLOSE]
@@ -112,7 +138,7 @@ class CandleStick(object):
 
         # --------------- メインfigure ---------------
         fig1_len = int(len(df) * self.__WIDE_SCALE)
-        enddt = oc.OANDA_GRN.offset(df.index[-1], granularity)
+        enddt = oc.OandaGrn.offset(df.index[-1], self.__GRANULARITY)
 
         plt1 = figure(
             plot_height=400,
@@ -146,6 +172,14 @@ class CandleStick(object):
         plt1.vbar(df.index[equ], self.__WIDE, df[self.__OPEN][equ],
                   df[self.__CLOSE][equ], fill_color=equ_color,
                   line_width=1, line_color=equ_color)
+
+        # 移動平均線
+        plt1.line(df.index, df[self.__SMA1COL],
+                  legend=self.__SMA1COL, line_color="white")
+        plt1.line(df.index, df[self.__SMA2COL],
+                  legend=self.__SMA2COL, line_color="yellow")
+        plt1.line(df.index, df[self.__SMA3COL],
+                  legend=self.__SMA3COL, line_color="cyan")
 
         # --------------- レンジツールfigure ---------------
         plt2 = figure(
@@ -190,17 +224,27 @@ class CandleStick(object):
 
         show(Column(plt1, plt2))    # open a browser
 
+    def __changeDateTimeFmt(self, dt):
+        """"日付フォーマットの変換メソッド
+        引数:
+            dt (str): DT_FMT形式でフォーマットされた日付
+        戻り値:
+            tf_dt (str): 変換後の日付
+        """
+        if self.__GRANULARITY is oc.OandaGrn.D:
+            tdt = datetime.datetime.strptime(dt, self.__DT_FMT)
+            tf_dt = datetime.date(tdt.year, tdt.month, tdt.day)
+
+        return tf_dt
+
 
 if __name__ == "__main__":
-    cs = CandleStick()
+    cs = CandleStick(oc.OandaGrn.D)
 
-    fmt = '%Y-%m-%dT%H:%M:00.000000Z'
-
-    instrument = oc.OANDA_INS.USD_JPY
-    datetime_from = datetime.datetime(year=2018, month=9, day=1, hour=12,
-                                      minute=0, second=0).strftime(fmt)
-    datetime_to = datetime.datetime(year=2018, month=12, day=15, hour=12,
-                                    minute=0, second=0).strftime(fmt)
-    granularity = oc.OANDA_GRN.D
-    cs.drawCandleStick(instrument, datetime_from, datetime_to,
-                       granularity)
+    instrument = oc.OandaIns.USD_JPY
+    datetime_from = datetime.datetime(year=2018, month=1, day=1, hour=0,
+                                      minute=0, second=0)
+    datetime_to = datetime.datetime(year=2019, month=2, day=1, hour=12,
+                                    minute=0, second=0)
+    cs.getInstrumentsCandles(instrument, datetime_from, datetime_to)
+    cs.drawCandleStick()

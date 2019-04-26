@@ -17,9 +17,9 @@ import oandapyV20.endpoints.instruments as instruments
 import pandas as pd
 
 
-api = API(access_token=ya.access_token, environment=oc.OANDA_ENV.PRACTICE)
+api = API(access_token=ya.access_token, environment=oc.OandaEnv.PRACTICE)
 
-fmt = '%Y-%m-%dT%H:%M:00.000000Z'
+fmt = "%Y-%m-%dT%H:%M:00.000000000Z"
 # 2015年9月15日のローソク足情報を取得
 _from = datetime.datetime(year=2015, month=9, day=15,
                           hour=12, minute=0, second=0).strftime(fmt)
@@ -28,7 +28,7 @@ params = {
     "alignmentTimezone": "Japan",
     'from': _from,
     "count": 24,  # 取得数24
-    "granularity": oc.OANDA_GRN.H1  # 1時間足
+    "granularity": oc.OandaGrn.H1  # 1時間足
 }
 
 # APIへ過去データをリクエスト

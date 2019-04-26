@@ -6,15 +6,15 @@
 import pandas.tseries.offsets as offsets
 
 
-class OANDA_ENV(object):
-    """ OANDA_ENV - OANDA環境の定義クラス。"""
+class OandaEnv(object):
+    """ OandaEnv - OANDA環境の定義クラス。"""
 
     PRACTICE = "practice"   # デモ口座
     LIVE = "live"   # 本講座
 
 
-class OANDA_GRN(object):
-    """ OANDA_GRN - ローソク足の時間足定義クラス。"""
+class OandaGrn(object):
+    """ OandaGrn - ローソク足の時間足定義クラス。"""
 
     S5 = "S5"  # 5 seconds
     S10 = "S10"  # 10 seconds
@@ -45,52 +45,52 @@ class OANDA_GRN(object):
     def offset(cls, dt, granularity):
         if granularity is cls.S5:
             return dt + offsets.Second(5 * cls.__OFS_MAG)
-        if granularity is cls.S10:
+        elif granularity is cls.S10:
             return dt + offsets.Second(10 * cls.__OFS_MAG)
-        if granularity is cls.S15:
+        elif granularity is cls.S15:
             return dt + offsets.Second(15 * cls.__OFS_MAG)
-        if granularity is cls.S30:
+        elif granularity is cls.S30:
             return dt + offsets.Second(30 * cls.__OFS_MAG)
-        if granularity is cls.M1:
+        elif granularity is cls.M1:
             return dt + offsets.Minute(1 * cls.__OFS_MAG)
-        if granularity is cls.M2:
+        elif granularity is cls.M2:
             return dt + offsets.Minute(2 * cls.__OFS_MAG)
-        if granularity is cls.M3:
+        elif granularity is cls.M3:
             return dt + offsets.Minute(3 * cls.__OFS_MAG)
-        if granularity is cls.M4:
+        elif granularity is cls.M4:
             return dt + offsets.Minute(4 * cls.__OFS_MAG)
-        if granularity is cls.M5:
+        elif granularity is cls.M5:
             return dt + offsets.Minute(5 * cls.__OFS_MAG)
-        if granularity is cls.M10:
+        elif granularity is cls.M10:
             return dt + offsets.Minute(10 * cls.__OFS_MAG)
-        if granularity is cls.M15:
+        elif granularity is cls.M15:
             return dt + offsets.Minute(15 * cls.__OFS_MAG)
-        if granularity is cls.M30:
+        elif granularity is cls.M30:
             return dt + offsets.Minute(30 * cls.__OFS_MAG)
-        if granularity is cls.H1:
+        elif granularity is cls.H1:
             return dt + offsets.Hour(1 * cls.__OFS_MAG)
-        if granularity is cls.H2:
+        elif granularity is cls.H2:
             return dt + offsets.Hour(2 * cls.__OFS_MAG)
-        if granularity is cls.H3:
+        elif granularity is cls.H3:
             return dt + offsets.Hour(3 * cls.__OFS_MAG)
-        if granularity is cls.H4:
+        elif granularity is cls.H4:
             return dt + offsets.Hour(4 * cls.__OFS_MAG)
-        if granularity is cls.H6:
+        elif granularity is cls.H6:
             return dt + offsets.Hour(6 * cls.__OFS_MAG)
-        if granularity is cls.H8:
+        elif granularity is cls.H8:
             return dt + offsets.Hour(8 * cls.__OFS_MAG)
-        if granularity is cls.H12:
+        elif granularity is cls.H12:
             return dt + offsets.Hour(12 * cls.__OFS_MAG)
-        if granularity is cls.D:
+        elif granularity is cls.D:
             return dt + offsets.Day(1 * cls.__OFS_MAG)
-        if granularity is cls.W:
+        elif granularity is cls.W:
             return dt + offsets.Week(1 * cls.__OFS_MAG)
-        if granularity is cls.M:
+        elif granularity is cls.M:
             return dt + offsets.MonthOffset(1 * cls.__OFS_MAG)
 
 
-class OANDA_INS(object):
-    """ OANDA_INS - 通貨ペアの定義クラス。"""
+class OandaIns(object):
+    """ OandaIns - 通貨ペアの定義クラス。"""
 
     USD_JPY = "USD_JPY"
     EUR_JPY = "EUR_JPY"
