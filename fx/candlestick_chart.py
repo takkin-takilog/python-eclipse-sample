@@ -43,6 +43,8 @@ class CandleStick(object):
         self.__LOW = "low"
         self.__CLOSE = "close"
 
+        self.__WIDE = 12 * 60 * 60 * 1000  # half day in ms
+
         self.__api = API(access_token=ya.access_token,
                          environment=oc.OANDA_ENV.PRACTICE)
 
@@ -87,23 +89,35 @@ class CandleStick(object):
         inc = df[self.__CLOSE] > df[self.__OPEN]
         dec = df[self.__OPEN] > df[self.__CLOSE]
         equ = df[self.__CLOSE] == df[self.__OPEN]
-        w = 12 * 60 * 60 * 1000  # half day in ms
 
-        TOOLS = "pan,wheel_zoom,box_zoom,reset,save"
+        set_tools = "pan,wheel_zoom,box_zoom,reset,save"
 
-        p = figure(x_axis_type="datetime", tools=TOOLS,
+        p = figure(x_axis_type="datetime", tools=set_tools,
+                   background_fill_color="#2e2e2e",
                    plot_width=1000, title="MSFT Candlestick")
         p.xaxis.major_label_orientation = pi / 4
         p.grid.grid_line_alpha = 0.3
 
-        p.segment(df.index, df[self.__HIGHT], df.index,
-                  df[self.__LOW], color="black")
-        p.vbar(df.index[inc], w, df[self.__OPEN][inc], df[self.__CLOSE][inc],
-               fill_color="#CD360D", line_color="black")
-        p.vbar(df.index[dec], w, df[self.__OPEN][dec], df[self.__CLOSE][dec],
-               fill_color="#296FBC", line_color="black")
-        p.vbar(df.index[equ], w, df[self.__OPEN][equ], df[self.__CLOSE][equ],
-               fill_color="#FFEE77", line_color="black")
+        inc_color = "#e73b3a"
+        p.segment(df.index[inc], df[self.__HIGHT][inc], df.index[inc],
+                  df[self.__LOW][inc], color=inc_color)
+        p.vbar(df.index[inc], self.__WIDE, df[self.__OPEN][inc],
+               df[self.__CLOSE][inc], fill_color=inc_color,
+               line_width=1, line_color=inc_color)
+
+        dec_color = "#03c103"
+        p.segment(df.index[dec], df[self.__HIGHT][dec], df.index[dec],
+                  df[self.__LOW][dec], color=dec_color)
+        p.vbar(df.index[dec], self.__WIDE, df[self.__OPEN][dec],
+               df[self.__CLOSE][dec], fill_color=dec_color,
+               line_width=1, line_color=dec_color)
+
+        equ_color = "#ffff00"
+        p.segment(df.index[equ], df[self.__HIGHT][equ], df.index[equ],
+                  df[self.__LOW][equ], color=equ_color)
+        p.vbar(df.index[equ], self.__WIDE, df[self.__OPEN][equ],
+               df[self.__CLOSE][equ], fill_color=equ_color,
+               line_width=1, line_color=equ_color)
 
         output_file("candlestick.html", title="candlestick.py example")
 
