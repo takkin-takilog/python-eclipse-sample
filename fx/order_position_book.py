@@ -1,5 +1,5 @@
 # ==============================================================================
-# brief        ローソク足チャートの描写
+# brief        オープンオーダー、オープンポジションの描写
 #
 # author       たっきん
 #
@@ -25,12 +25,8 @@ class OrderBook(object):
     """ OrderBook - オーダーブック定義クラス。"""
 
     def __init__(self, granularity):
-        """"コンストラクタ
-        引数:
-            dt (str): datetime formatted by DT_FMT.
-        戻り値:
-            tf_dt (str): changed datetime.
-        """
+        """"コンストラクタ"""
+
         self.__BUCKETS = "buckets"
 
         self.__ORD_BOOK = "orderBook"
