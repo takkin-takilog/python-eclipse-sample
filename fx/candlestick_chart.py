@@ -65,8 +65,10 @@ class CandleStick(object):
         self.__BB_BASE = "BB-Base"
         self.__BB_U_SIGMA = "BB-Sig-up"
         self.__BB_U_SIGMA2 = "BB-Sig*2-up"
+        self.__BB_U_SIGMA3 = "BB-Sig*3-up"
         self.__BB_L_SIGMA = "BB-Sig-low"
         self.__BB_L_SIGMA2 = "BB-Sig*2-low"
+        self.__BB_L_SIGMA3 = "BB-Sig*3-low"
 
         # MACD
         self.__MACD = "MACD"
@@ -131,12 +133,13 @@ class CandleStick(object):
         # ---------- ボリンジャーバンド ----------
         sigma = df[self.__CLOSE].rolling(window=self.__SMA2PRD).std(ddof=0)
         base = df[self.__SMA2COL]
-        deviation = 2
         df[self.__BB_BASE] = base
         df[self.__BB_U_SIGMA] = base + sigma
-        df[self.__BB_U_SIGMA2] = base + sigma * deviation
+        df[self.__BB_U_SIGMA2] = base + sigma * 2
+        df[self.__BB_U_SIGMA3] = base + sigma * 3
         df[self.__BB_L_SIGMA] = base - sigma
-        df[self.__BB_L_SIGMA2] = base - sigma * deviation
+        df[self.__BB_L_SIGMA2] = base - sigma * 2
+        df[self.__BB_L_SIGMA3] = base - sigma * 3
 
         # ---------- MACD ----------
         ema_s = df[self.__CLOSE].ewm(span=12).mean()
@@ -223,6 +226,11 @@ class CandleStick(object):
                       legend="±2σ")
         plt_main.line(df.index, df[self.__BB_L_SIGMA2], line_dash="dotted",
                       line_width=bb_width, line_color="aqua")
+        plt_main.line(df.index, df[self.__BB_U_SIGMA3], line_dash="dotted",
+                      line_width=bb_width, line_color="aquamarine",
+                      legend="±3σ")
+        plt_main.line(df.index, df[self.__BB_L_SIGMA3], line_dash="dotted",
+                      line_width=bb_width, line_color="aquamarine")
         plt_main.legend.location = "top_left"
 
         # --------------- レンジツールfigure ---------------
