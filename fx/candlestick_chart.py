@@ -61,6 +61,13 @@ class CandleStick(object):
         self.__SMA2COL = "SMA-" + str(self.__SMA2PRD)
         self.__SMA3COL = "SMA-" + str(self.__SMA3PRD)
 
+        # ボリンジャーバンド
+        self.__BB_BASE = "BB-Base"
+        self.__BB_U_SIGMA = "BB-Sig-up"
+        self.__BB_U_SIGMA2 = "BB-Sig*2-up"
+        self.__BB_L_SIGMA = "BB-Sig-low"
+        self.__BB_L_SIGMA2 = "BB-Sig*2-low"
+
         # MACD
         self.__MACD = "MACD"
         self.__SIGN = "SIGN"
@@ -113,7 +120,7 @@ class CandleStick(object):
         # date型を整形する
         df.index = pd.to_datetime(df.index)
 
-        # 移動平均線
+        # ---------- 移動平均線 ----------
         df[self.__SMA1COL] = df[self.__CLOSE].rolling(
             window=self.__SMA1PRD).mean()
         df[self.__SMA2COL] = df[self.__CLOSE].rolling(
@@ -121,11 +128,20 @@ class CandleStick(object):
         df[self.__SMA3COL] = df[self.__CLOSE].rolling(
             window=self.__SMA3PRD).mean()
 
-        # MACD
-        tmp_df = pd.DataFrame()
-        tmp_df['12 ema'] = df[self.__CLOSE].ewm(span=12).mean()
-        tmp_df['26 ema'] = df[self.__CLOSE].ewm(span=26).mean()
-        df[self.__MACD] = (tmp_df['12 ema'] - tmp_df['26 ema'])
+        # ---------- ボリンジャーバンド ----------
+        sigma = df[self.__CLOSE].rolling(window=self.__SMA2PRD).std(ddof=0)
+        base = df[self.__SMA2COL]
+        deviation = 2
+        df[self.__BB_BASE] = base
+        df[self.__BB_U_SIGMA] = base + sigma
+        df[self.__BB_U_SIGMA2] = base + sigma * deviation
+        df[self.__BB_L_SIGMA] = base - sigma
+        df[self.__BB_L_SIGMA2] = base - sigma * deviation
+
+        # ---------- MACD ----------
+        ema_s = df[self.__CLOSE].ewm(span=12).mean()
+        ema_l = df[self.__CLOSE].ewm(span=26).mean()
+        df[self.__MACD] = (ema_s - ema_l)
         df[self.__SIGN] = df[self.__MACD].ewm(span=9).mean()
 
         self.__df = copy.copy(df)
@@ -166,32 +182,45 @@ class CandleStick(object):
 
         # draw Candle Stick (increment)
         plt_main.segment(df.index[inc], df[self.__HIGHT][inc], df.index[inc],
-                         df[self.__LOW][inc], color=inc_color)
+                         df[self.__LOW][inc], color=inc_color, line_width=1)
         plt_main.vbar(df.index[inc], self.__WIDE, df[self.__OPEN][inc],
                       df[self.__CLOSE][inc], fill_color=inc_color,
                       line_width=1, line_color=inc_color)
 
         # draw Candle Stick (decrement)
         plt_main.segment(df.index[dec], df[self.__HIGHT][dec], df.index[dec],
-                         df[self.__LOW][dec], color=dec_color)
+                         df[self.__LOW][dec], color=dec_color, line_width=1)
         plt_main.vbar(df.index[dec], self.__WIDE, df[self.__OPEN][dec],
                       df[self.__CLOSE][dec], fill_color=dec_color,
                       line_width=1, line_color=dec_color)
 
         # draw Candle Stick (equal)
         plt_main.segment(df.index[equ], df[self.__HIGHT][equ], df.index[equ],
-                         df[self.__LOW][equ], color=equ_color)
+                         df[self.__LOW][equ], color=equ_color, line_width=1)
         plt_main.vbar(df.index[equ], self.__WIDE, df[self.__OPEN][equ],
                       df[self.__CLOSE][equ], fill_color=equ_color,
                       line_width=1, line_color=equ_color)
 
         # 移動平均線
-        plt_main.line(df.index, df[self.__SMA1COL],
-                      legend=self.__SMA1COL, line_color="white")
-        plt_main.line(df.index, df[self.__SMA2COL],
-                      legend=self.__SMA2COL, line_color="yellow")
-        plt_main.line(df.index, df[self.__SMA3COL],
-                      legend=self.__SMA3COL, line_color="cyan")
+        plt_main.line(df.index, df[self.__SMA1COL], line_width=2,
+                      line_color="pink")
+        plt_main.line(df.index, df[self.__SMA2COL], line_width=2,
+                      line_color="yellow")
+        plt_main.line(df.index, df[self.__SMA3COL], line_width=2,
+                      line_color="orange")
+
+        # ボリンジャーバンド
+        bb_width = 1
+        plt_main.line(df.index, df[self.__BB_BASE], line_dash="dotted",
+                      line_width=2, line_color="blue")
+        plt_main.line(df.index, df[self.__BB_U_SIGMA], line_dash="dotted",
+                      line_width=bb_width, line_color="deepskyblue")
+        plt_main.line(df.index, df[self.__BB_L_SIGMA], line_dash="dotted",
+                      line_width=bb_width, line_color="deepskyblue")
+        plt_main.line(df.index, df[self.__BB_U_SIGMA2], line_dash="dotted",
+                      line_width=bb_width, line_color="aqua")
+        plt_main.line(df.index, df[self.__BB_L_SIGMA2], line_dash="dotted",
+                      line_width=bb_width, line_color="aqua")
 
         # --------------- レンジツールfigure ---------------
         plt_rang = figure(
