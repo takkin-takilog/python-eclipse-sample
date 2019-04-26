@@ -12,7 +12,7 @@ import datetime
 from math import pi
 
 from bokeh.layouts import Column
-from bokeh.models import RangeTool
+from bokeh.models import RangeTool, Range1d
 from bokeh.plotting import figure, show, output_file
 from oandapyV20 import API
 from bokehlib import bokeh_common as bc
@@ -112,11 +112,13 @@ class CandleStick(object):
 
         # --------------- メインfigure ---------------
         fig1_len = int(len(df) * self.__WIDE_SCALE)
+        enddt = oc.OANDA_GRN.offset(df.index[-1], granularity)
 
         plt1 = figure(
+            plot_height=400,
             plot_width=fig_width,
             x_axis_type=bc.AxisTyp.X_DATETIME,
-            x_range=(df.index[-fig1_len], df.index[-1]),
+            x_range=(df.index[-fig1_len], enddt),
             tools=set_tools,
             background_fill_color=self.__BG_COLOR,
             title="Candlestick example"
@@ -149,6 +151,7 @@ class CandleStick(object):
         plt2 = figure(
             plot_height=150,
             plot_width=fig_width,
+            x_range=(df.index[0], enddt),
             y_range=plt1.y_range,
             x_axis_type=bc.AxisTyp.X_DATETIME,
             background_fill_color=self.__BG_COLOR,
@@ -178,8 +181,9 @@ class CandleStick(object):
                   df[self.__CLOSE][equ], fill_color=equ_color,
                   line_width=1, line_color=equ_color)
 
-        range_rool = RangeTool(x_range=plt1.x_range)
-        plt2.add_tools(range_rool)
+        range_tool = RangeTool(x_range=plt1.x_range)
+        plt2.add_tools(range_tool)
+        plt2.toolbar.active_multi = range_tool
 
         output_file("candlestick.html", title="candlestick.py example")
 
