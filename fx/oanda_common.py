@@ -37,3 +37,11 @@ class OANDA_GRN(object):
     D = "D"  # 1 Day
     W = "W"  # 1 Week
     M = "M"  # 1 Month
+
+
+class OANDA_INS(object):
+    """ OANDA_INS - 通貨ペアの定義クラス。"""
+
+    USD_JPY = "USD_JPY"
+    EUR_JPY = "EUR_JPY"
+    EUR_USD = "EUR_USD"
