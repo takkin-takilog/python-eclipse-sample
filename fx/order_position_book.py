@@ -35,9 +35,10 @@ class OrderBook(object):
         戻り値:
             tf_dt (str): changed datetime.
         """
-
-        self.__ORDERBOOK = "orderBook"
         self.__BUCKETS = "buckets"
+
+        self.__ORD_BOOK = "orderBook"
+        self.__PSI_BOOK = "positionBook"
         self.__PRICE = "price"
         self.__LONG = "longCountPercent"
         self.__SHORT = "shortCountPercent"
@@ -56,10 +57,15 @@ class OrderBook(object):
         self.__X_AXIS_MAX = 2.5  # X軸レンジ
 
         self.__BG_COLOR = "#2e2e2e"
+        self.__BAR_R_COLOR = "#00A4BD"
+        self.__BAR_L_COLOR = "#FF8400"
+        self.__CURPRI_COLOR = "#7DA900"
 
-        self.__df = []
-        self.__hbar_height = 0
-        self.__cur_price = 0
+        self.__ord_df = []
+        self.__ord_curpri = 0
+
+        self.__psi_df = []
+        self.__psi_curpri = 0
 
         self.__api = API(access_token=ya.access_token,
                          environment=oc.OandaEnv.PRACTICE)
@@ -76,7 +82,7 @@ class OrderBook(object):
         self.__api.request(ic)
 
         self.__data = []
-        for raw in ic.response[self.__ORDERBOOK][self.__BUCKETS]:
+        for raw in ic.response[self.__ORD_BOOK][self.__BUCKETS]:
             self.__data.append([float(raw[self.__PRICE]),
                                 float(raw[self.__LONG]),
                                 float(raw[self.__SHORT])])
@@ -88,20 +94,57 @@ class OrderBook(object):
                       self.__SHORT]
         df = df.set_index(self.__PRICE).sort_index(ascending=False)
         # date型を整形する
-        time = pd.to_datetime(self.__changeDateTimeFmt(ic.response[self.__ORDERBOOK][self.__TIME]))
-        cur_price = float(ic.response[self.__ORDERBOOK][self.__CUR_PRICE])
-        bucket_width = float(ic.response[self.__ORDERBOOK][self.__BUCKET_WIDTH])
+        time = pd.to_datetime(self.__changeDateTimeFmt(ic.response[self.__ORD_BOOK][self.__TIME]))
+        cur_price = float(ic.response[self.__ORD_BOOK][self.__CUR_PRICE])
+        bucket_width = float(ic.response[self.__ORD_BOOK][self.__BUCKET_WIDTH])
+
+        print(df)
+        print(bucket_width)
 
         print(time)
         print(cur_price)
         idx_th = bucket_width * self.__CUT_TH
-        self.__df = df[(df.index > cur_price - idx_th) & (df.index < cur_price + idx_th)]
-        self.__hbar_height = bucket_width
-        self.__cur_price = cur_price
+        self.__ord_df = df[(df.index > cur_price - idx_th) & (df.index < cur_price + idx_th)]
+        self.__ord_curpri = cur_price
 
-    def drawOrderBook(self, fig_width=500):
+    def getInstrumentsPositionBook(self, instrument, dt):
 
-        df = copy.copy(self.__df)
+        params = {
+            "time": dt.strftime(self.__DT_FMT),
+        }
+
+        # APIへ過去データをリクエスト
+        ic = instruments.InstrumentsPositionBook(instrument=instrument,
+                                              params=params)
+        self.__api.request(ic)
+
+        self.__data = []
+        for raw in ic.response[self.__PSI_BOOK][self.__BUCKETS]:
+            self.__data.append([float(raw[self.__PRICE]),
+                                float(raw[self.__LONG]),
+                                float(raw[self.__SHORT])])
+
+        # リストからデータフレームへ変換
+        df = pd.DataFrame(self.__data)
+        df.columns = [self.__PRICE,
+                      self.__LONG,
+                      self.__SHORT]
+        df = df.set_index(self.__PRICE).sort_index(ascending=False)
+        # date型を整形する
+        time = pd.to_datetime(self.__changeDateTimeFmt(ic.response[self.__PSI_BOOK][self.__TIME]))
+        cur_price = float(ic.response[self.__PSI_BOOK][self.__CUR_PRICE])
+        bucket_width = float(ic.response[self.__PSI_BOOK][self.__BUCKET_WIDTH])
+
+        print(df)
+        print(bucket_width)
+
+        print(time)
+        print(cur_price)
+        idx_th = bucket_width * self.__CUT_TH
+        self.__psi_df = df[(df.index > cur_price - idx_th) & (df.index < cur_price + idx_th)]
+        self.__psi_curpri = cur_price
+
+    def drawPositionOrderBook(self, fig_width=500):
 
         set_tools = bc.ToolType.gen_str(bc.ToolType.XPAN,
                                         bc.ToolType.WHEEL_ZOOM,
@@ -109,6 +152,7 @@ class OrderBook(object):
                                         bc.ToolType.RESET,
                                         bc.ToolType.SAVE)
 
+        df = copy.copy(self.__ord_df)
         # --------------- メインfigure ---------------
         plt1 = figure(
             plot_height=500,
@@ -120,29 +164,57 @@ class OrderBook(object):
         )
         plt1.grid.grid_line_alpha = 0.3
 
-        print(df)
+        #print(df)
 
-        #df[(df.index > cur_price - idx_th) & (df.index < cur_price + idx_th)]
-
-        print("aaaaaaaaaaaaaa")
-        df_up = df[self.__LONG][(df.index > self.__cur_price)]
-        df_lo = -df[self.__SHORT][(df.index < self.__cur_price)]
+        df_up = df[self.__LONG][(df.index > self.__ord_curpri)]
+        df_lo = -df[self.__SHORT][(df.index < self.__ord_curpri)]
         df_right = pd.concat([df_up, df_lo])
-        print(df_right)
+        #print(df_right)
 
-        df_up = -df[self.__SHORT][(df.index > self.__cur_price)]
-        df_lo = df[self.__LONG][(df.index < self.__cur_price)]
+        df_up = -df[self.__SHORT][(df.index > self.__ord_curpri)]
+        df_lo = df[self.__LONG][(df.index < self.__ord_curpri)]
         df_left = pd.concat([df_up, df_lo])
-        print(df_left)
+        #print(df_left)
 
-        plt1.hbar(y=df.index, height=0.03, left=df_right, right=0, color="#00A4BD")
-        plt1.hbar(y=df.index, height=0.03, left=df_left, right=0, color="#FF8400")
+        plt1.hbar(y=df.index, height=0.03, left=df_right, right=0, color=self.__BAR_R_COLOR)
+        plt1.hbar(y=df.index, height=0.03, left=df_left, right=0, color=self.__BAR_L_COLOR)
         plt1.line(x=[-self.__X_AXIS_MAX, self.__X_AXIS_MAX],
-                 y=[self.__cur_price, self.__cur_price],
-                 color="#7DA900", line_width=3)
+                 y=[self.__ord_curpri, self.__ord_curpri],
+                 color=self.__CURPRI_COLOR, line_width=3)
+
+
+        df = copy.copy(self.__psi_df)
+        # --------------- メインfigure ---------------
+        plt2 = figure(
+            plot_height=500,
+            plot_width=fig_width,
+            x_range=(-self.__X_AXIS_MAX, self.__X_AXIS_MAX),
+            tools=set_tools,
+            title="Position Book example",
+            background_fill_color=self.__BG_COLOR
+        )
+        plt2.grid.grid_line_alpha = 0.3
+
+        #print(df)
+
+        df_up = df[self.__LONG][(df.index > self.__psi_curpri)]
+        df_lo = -df[self.__SHORT][(df.index < self.__psi_curpri)]
+        df_right = pd.concat([df_up, df_lo])
+        #print(df_right)
+
+        df_up = -df[self.__SHORT][(df.index > self.__psi_curpri)]
+        df_lo = df[self.__LONG][(df.index < self.__psi_curpri)]
+        df_left = pd.concat([df_up, df_lo])
+        #print(df_left)
+
+        plt2.hbar(y=df.index, height=0.03, left=df_right, right=0, color=self.__BAR_R_COLOR)
+        plt2.hbar(y=df.index, height=0.03, left=df_left, right=0, color=self.__BAR_L_COLOR)
+        plt2.line(x=[-self.__X_AXIS_MAX, self.__X_AXIS_MAX],
+                 y=[self.__psi_curpri, self.__psi_curpri],
+                 color=self.__CURPRI_COLOR, line_width=3)
 
         # make a grid
-        grid = gridplot([[None, plt1]])
+        grid = gridplot([[plt1, plt2]])
 
         show(grid)
 
@@ -166,4 +238,5 @@ if __name__ == "__main__":
 
     dt = datetime.datetime(year=2017, month=2, day=1, hour=12, minute=0, second=0)
     cs.getInstrumentsOrderBook(instrument, dt)
-    cs.drawOrderBook()
+    cs.getInstrumentsPositionBook(instrument, dt)
+    cs.drawPositionOrderBook()
