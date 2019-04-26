@@ -8,32 +8,69 @@
 #     Bokehのインストール（conda install _bokeh）
 # ==============================================================================
 
+from bokeh.models import BoxEditTool, ColumnDataSource
 from bokeh.plotting import figure, show, output_file
 
 from bokehlib import bokeh_common as bc
 import numpy as np
 
 
-def fig_sample01(tools, name):
-
-    start = 0
-    end = 20
+def draw_quadratic_curve(start, end):
+    """2次曲線描写
+    Args:
+        start (int): x axis range of start.
+        end (int): x axis range of end.
+    Returns:
+        xs (int): points of x element.
+        ys (int): points of y element.
+    """
     num = np.abs(end - start) + 1
 
     xs = np.linspace(start, end, num)
     ys = xs ** 2
 
-    TOOLS = "reset," + tools
+    return xs, ys
+
+
+def fig_sample01(tools, name):
 
     x_ax_typ = bc.AxisTyp.X_LINEAR
-    title_name = "bokeh plot sample [" + name + "]"
-    p = figure(x_axis_type=x_ax_typ, tools=TOOLS, title=title_name)
+    set_title = "bokeh plot sample [" + name + "]"
+    set_tools = "reset," + tools
+    p = figure(x_axis_type=x_ax_typ, tools=set_tools, title=set_title)
 
+    # ２次曲線描写
+    xs, ys = draw_quadratic_curve(0, 20)
     p.line(xs, ys, line_width=2)
     p.circle(xs, ys, size=10)
 
     output_file_name = "out/bokeh_plot_sample_" + name + ".html"
-    output_file(output_file_name, title=title_name)
+    output_file(output_file_name, title=set_title)
+
+    show(p)  # open a browser
+
+
+def fig_sample02(name):
+
+    x_ax_typ = bc.AxisTyp.X_LINEAR
+    set_title = "bokeh plot sample [" + name + "]"
+
+    set_tools = "reset"
+    p = figure(x_axis_type=x_ax_typ, tools=set_tools, title=set_title)
+
+    output_file_name = "out/bokeh_plot_sample_" + name + ".html"
+    output_file(output_file_name, title=set_title)
+
+    src = ColumnDataSource({
+        'x': [5, 2, 8], 'y': [5, 7, 8], 'width': [2, 1, 2],
+        'height': [2, 1, 1.5], 'alpha': [0.5, 0.5, 0.5]
+    })
+
+    renderer = p.rect('x', 'y', 'width', 'height', source=src, alpha='alpha')
+
+    draw_tool = BoxEditTool(renderers=[renderer], empty_value=1)
+    p.add_tools(draw_tool)
+    p.toolbar.active_drag = draw_tool
 
     show(p)  # open a browser
 
@@ -93,10 +130,8 @@ if __name__ == "__main__":
     toolsstr = bc.ToolType.gen_str(bc.ToolType.HELP)
     fig_sample01(toolsstr, "help")
 
-
-
     toolsstr = bc.ToolType.gen_str(bc.ToolType.BOX_EDIT)
-    fig_sample01(toolsstr, "box_edit")
+    fig_sample02("box_edit")
 
     toolsstr = bc.ToolType.gen_str(bc.ToolType.POLY_EDIT)
     fig_sample01(toolsstr, "poly_edit")

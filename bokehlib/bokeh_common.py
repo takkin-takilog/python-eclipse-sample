@@ -63,6 +63,15 @@ class ToolType(object):
 
     @classmethod
     def gen_str(cls, *args):
+        """TOOLタイプ設定用文字列生成メソッド
+        Args:
+            *args (str): TOOLタイプ文字列（複数指定可）
+        Returns:
+            引数の文字列をカンマ区切りで生成する。
+            <example>
+                args:("aaa", "bbb", "ccc")
+                Returns -> "aaa, bbb, ccc"
+        """
         mystr = ""
         for arg in args:
             mystr = mystr + "," + arg
