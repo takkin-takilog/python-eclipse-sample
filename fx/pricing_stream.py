@@ -16,9 +16,9 @@ from fx import oanda_common as oc
 from fx import your_account as ya
 
 
-api = API(access_token=ya.access_token, environment=oc.OANDA_ENV.PRACTICE)
+api = API(access_token=ya.access_token, environment=oc.OandaEnv.PRACTICE)
 
-paramOandaEnvtruments": "USD_JPY"}
+params = {"instruments": "USD_JPY"}
 ps = PricingStream(ya.account_number, params)
 
 try:
