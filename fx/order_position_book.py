@@ -10,11 +10,7 @@
 
 import copy
 import datetime
-from math import pi
-import json
-from bokeh.layouts import Column
-from bokeh.models import RangeTool
-from bokeh.plotting import figure, show, output_file
+from bokeh.plotting import figure, show
 from oandapyV20 import API
 from bokeh.layouts import gridplot
 
@@ -94,7 +90,8 @@ class OrderBook(object):
                       self.__SHORT]
         df = df.set_index(self.__PRICE).sort_index(ascending=False)
         # date型を整形する
-        time = pd.to_datetime(self.__changeDateTimeFmt(ic.response[self.__ORD_BOOK][self.__TIME]))
+        time = pd.to_datetime(self.__changeDateTimeFmt(
+            ic.response[self.__ORD_BOOK][self.__TIME]))
         cur_price = float(ic.response[self.__ORD_BOOK][self.__CUR_PRICE])
         bucket_width = float(ic.response[self.__ORD_BOOK][self.__BUCKET_WIDTH])
 
@@ -104,7 +101,8 @@ class OrderBook(object):
         print(time)
         print(cur_price)
         idx_th = bucket_width * self.__CUT_TH
-        self.__ord_df = df[(df.index > cur_price - idx_th) & (df.index < cur_price + idx_th)]
+        self.__ord_df = df[(df.index > cur_price - idx_th)
+                           & (df.index < cur_price + idx_th)]
         self.__ord_curpri = cur_price
 
     def getInstrumentsPositionBook(self, instrument, dt):
@@ -115,7 +113,7 @@ class OrderBook(object):
 
         # APIへ過去データをリクエスト
         ic = instruments.InstrumentsPositionBook(instrument=instrument,
-                                              params=params)
+                                                 params=params)
         self.__api.request(ic)
 
         self.__data = []
@@ -131,7 +129,8 @@ class OrderBook(object):
                       self.__SHORT]
         df = df.set_index(self.__PRICE).sort_index(ascending=False)
         # date型を整形する
-        time = pd.to_datetime(self.__changeDateTimeFmt(ic.response[self.__PSI_BOOK][self.__TIME]))
+        time = pd.to_datetime(self.__changeDateTimeFmt(
+            ic.response[self.__PSI_BOOK][self.__TIME]))
         cur_price = float(ic.response[self.__PSI_BOOK][self.__CUR_PRICE])
         bucket_width = float(ic.response[self.__PSI_BOOK][self.__BUCKET_WIDTH])
 
@@ -141,7 +140,8 @@ class OrderBook(object):
         print(time)
         print(cur_price)
         idx_th = bucket_width * self.__CUT_TH
-        self.__psi_df = df[(df.index > cur_price - idx_th) & (df.index < cur_price + idx_th)]
+        self.__psi_df = df[(df.index > cur_price - idx_th)
+                           & (df.index < cur_price + idx_th)]
         self.__psi_curpri = cur_price
 
     def drawPositionOrderBook(self, fig_width=500):
@@ -155,7 +155,7 @@ class OrderBook(object):
         df = copy.copy(self.__ord_df)
         # --------------- メインfigure ---------------
         plt1 = figure(
-            plot_height=500,
+            plot_height=fig_width,
             plot_width=fig_width,
             x_range=(-self.__X_AXIS_MAX, self.__X_AXIS_MAX),
             tools=set_tools,
@@ -164,29 +164,29 @@ class OrderBook(object):
         )
         plt1.grid.grid_line_alpha = 0.3
 
-        #print(df)
-
         df_up = df[self.__LONG][(df.index > self.__ord_curpri)]
         df_lo = -df[self.__SHORT][(df.index < self.__ord_curpri)]
         df_right = pd.concat([df_up, df_lo])
-        #print(df_right)
 
         df_up = -df[self.__SHORT][(df.index > self.__ord_curpri)]
         df_lo = df[self.__LONG][(df.index < self.__ord_curpri)]
         df_left = pd.concat([df_up, df_lo])
-        #print(df_left)
 
-        plt1.hbar(y=df.index, height=0.03, left=df_right, right=0, color=self.__BAR_R_COLOR)
-        plt1.hbar(y=df.index, height=0.03, left=df_left, right=0, color=self.__BAR_L_COLOR)
+        plt1.hbar(y=df.index, height=0.03, left=df_right,
+                  right=0, color=self.__BAR_R_COLOR)
+        plt1.hbar(y=df.index, height=0.03, left=df_left,
+                  right=0, color=self.__BAR_L_COLOR)
         plt1.line(x=[-self.__X_AXIS_MAX, self.__X_AXIS_MAX],
-                 y=[self.__ord_curpri, self.__ord_curpri],
-                 color=self.__CURPRI_COLOR, line_width=3)
+                  y=[self.__ord_curpri, self.__ord_curpri],
+                  color=self.__CURPRI_COLOR, line_width=3)
 
+        plt1.xaxis.axis_label = "Count Percent[%]"
+        plt1.yaxis.axis_label = "Price"
 
         df = copy.copy(self.__psi_df)
         # --------------- メインfigure ---------------
         plt2 = figure(
-            plot_height=500,
+            plot_height=fig_width,
             plot_width=fig_width,
             x_range=(-self.__X_AXIS_MAX, self.__X_AXIS_MAX),
             tools=set_tools,
@@ -195,29 +195,29 @@ class OrderBook(object):
         )
         plt2.grid.grid_line_alpha = 0.3
 
-        #print(df)
-
         df_up = df[self.__LONG][(df.index > self.__psi_curpri)]
         df_lo = -df[self.__SHORT][(df.index < self.__psi_curpri)]
         df_right = pd.concat([df_up, df_lo])
-        #print(df_right)
 
         df_up = -df[self.__SHORT][(df.index > self.__psi_curpri)]
         df_lo = df[self.__LONG][(df.index < self.__psi_curpri)]
         df_left = pd.concat([df_up, df_lo])
-        #print(df_left)
 
-        plt2.hbar(y=df.index, height=0.03, left=df_right, right=0, color=self.__BAR_R_COLOR)
-        plt2.hbar(y=df.index, height=0.03, left=df_left, right=0, color=self.__BAR_L_COLOR)
+        plt2.hbar(y=df.index, height=0.03, left=df_right,
+                  right=0, color=self.__BAR_R_COLOR)
+        plt2.hbar(y=df.index, height=0.03, left=df_left,
+                  right=0, color=self.__BAR_L_COLOR)
         plt2.line(x=[-self.__X_AXIS_MAX, self.__X_AXIS_MAX],
-                 y=[self.__psi_curpri, self.__psi_curpri],
-                 color=self.__CURPRI_COLOR, line_width=3)
+                  y=[self.__psi_curpri, self.__psi_curpri],
+                  color=self.__CURPRI_COLOR, line_width=3)
+
+        plt2.xaxis.axis_label = "Count Percent[%]"
+        plt2.yaxis.axis_label = "Price"
 
         # make a grid
         grid = gridplot([[plt1, plt2]])
 
         show(grid)
-
 
     def __changeDateTimeFmt(self, dt):
         """"日付フォーマットの変換メソッド
@@ -236,7 +236,8 @@ if __name__ == "__main__":
 
     instrument = oc.OandaIns.USD_JPY
 
-    dt = datetime.datetime(year=2017, month=2, day=1, hour=12, minute=0, second=0)
+    dt = datetime.datetime(year=2017, month=2, day=1,
+                           hour=12, minute=0, second=0)
     cs.getInstrumentsOrderBook(instrument, dt)
     cs.getInstrumentsPositionBook(instrument, dt)
-    cs.drawPositionOrderBook()
+    cs.drawPositionOrderBook(500)
