@@ -138,7 +138,7 @@ class CandleStick(object):
         dec = df[self.__OPEN] > df[self.__CLOSE]
         equ = df[self.__CLOSE] == df[self.__OPEN]
 
-        set_tools = bc.ToolType.gen_str(bc.ToolType.PAN,
+        set_tools = bc.ToolType.gen_str(bc.ToolType.XPAN,
                                         bc.ToolType.WHEEL_ZOOM,
                                         bc.ToolType.BOX_ZOOM,
                                         bc.ToolType.RESET,
@@ -229,19 +229,21 @@ class CandleStick(object):
 
         # --------------- MACD figure ---------------
         plt_macd = figure(
-            plot_height=200,
+            plot_height=150,
             plot_width=fig_width,
             x_axis_type=bc.AxisTyp.X_DATETIME,
-            x_range=(df.index[-fig1_len], enddt),
+            x_range=plt_main.x_range,
             tools=set_tools,
             background_fill_color=self.__BG_COLOR,
         )
+        plt_macd.xaxis.major_label_orientation = pi / 4
+        plt_macd.grid.grid_line_alpha = 0.3
 
         # MACD
         plt_macd.line(df.index, df[self.__MACD],
-                      legend=self.__MACD, line_color="white")
+                      legend=self.__MACD, line_color="red")
         plt_macd.line(df.index, df[self.__SIGN],
-                      legend=self.__SIGN, line_color="yellow")
+                      legend=self.__SIGN, line_color="cyan")
         plt_macd.grid.grid_line_alpha = 0.3
 
         # --------------- レンジツール ---------------
