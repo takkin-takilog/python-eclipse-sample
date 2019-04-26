@@ -15,6 +15,7 @@ from bokeh.layouts import Column
 from bokeh.models import RangeTool
 from bokeh.plotting import figure, show, output_file
 from oandapyV20 import API
+from bokehlib import bokeh_common as bc
 
 from fx import oanda_common as oc
 from fx import your_account as ya
@@ -47,11 +48,18 @@ class CandleStick(object):
 
         self.__WIDE = 12 * 60 * 60 * 1000  # half day in ms
 
+        self.__WIDE_SCALE = 0.2
+
+        self.__BG_COLOR = "#2e2e2e"
+        self.__CND_INC_COLOR = "#e73b3a"
+        self.__CND_DEC_COLOR = "#03c103"
+        self.__CND_EQU_COLOR = "#ffff00"
+
         self.__api = API(access_token=ya.access_token,
                          environment=oc.OANDA_ENV.PRACTICE)
 
     def drawCandleStick(self, instrument, datetime_from, datetime_to,
-                        granularity):
+                        granularity, fig_width=1000):
 
         params = {
             "alignmentTimezone": "Japan",
@@ -92,36 +100,45 @@ class CandleStick(object):
         dec = df[self.__OPEN] > df[self.__CLOSE]
         equ = df[self.__CLOSE] == df[self.__OPEN]
 
-        set_tools = "pan,wheel_zoom,box_zoom,reset,save"
+        set_tools = bc.ToolType.gen_str(bc.ToolType.PAN,
+                                        bc.ToolType.WHEEL_ZOOM,
+                                        bc.ToolType.BOX_ZOOM,
+                                        bc.ToolType.RESET,
+                                        bc.ToolType.SAVE)
+
+        inc_color = self.__CND_INC_COLOR
+        dec_color = self.__CND_DEC_COLOR
+        equ_color = self.__CND_EQU_COLOR
 
         # --------------- メインfigure ---------------
+        fig1_len = int(len(df) * self.__WIDE_SCALE)
+
         plt1 = figure(
-            plot_width=1000,
-            x_axis_type="datetime",
-            # X値の描画範囲, Range1dオブジェクトが作成される (1)
-            x_range=(df.index[-10], df.index[-1]),
+            plot_width=fig_width,
+            x_axis_type=bc.AxisTyp.X_DATETIME,
+            x_range=(df.index[-fig1_len], df.index[-1]),
             tools=set_tools,
-            background_fill_color="#2e2e2e",
-            title="MSFT Candlestick"
+            background_fill_color=self.__BG_COLOR,
+            title="Candlestick example"
         )
         plt1.xaxis.major_label_orientation = pi / 4
         plt1.grid.grid_line_alpha = 0.3
 
-        inc_color = "#e73b3a"
+        # draw Candle Stick (increment)
         plt1.segment(df.index[inc], df[self.__HIGHT][inc], df.index[inc],
                      df[self.__LOW][inc], color=inc_color)
         plt1.vbar(df.index[inc], self.__WIDE, df[self.__OPEN][inc],
                   df[self.__CLOSE][inc], fill_color=inc_color,
                   line_width=1, line_color=inc_color)
 
-        dec_color = "#03c103"
+        # draw Candle Stick (decrement)
         plt1.segment(df.index[dec], df[self.__HIGHT][dec], df.index[dec],
                      df[self.__LOW][dec], color=dec_color)
         plt1.vbar(df.index[dec], self.__WIDE, df[self.__OPEN][dec],
                   df[self.__CLOSE][dec], fill_color=dec_color,
                   line_width=1, line_color=dec_color)
 
-        equ_color = "#ffff00"
+        # draw Candle Stick (equal)
         plt1.segment(df.index[equ], df[self.__HIGHT][equ], df.index[equ],
                      df[self.__LOW][equ], color=equ_color)
         plt1.vbar(df.index[equ], self.__WIDE, df[self.__OPEN][equ],
@@ -131,37 +148,37 @@ class CandleStick(object):
         # --------------- レンジツールfigure ---------------
         plt2 = figure(
             plot_height=150,
-            plot_width=plt1.plot_width,
+            plot_width=fig_width,
             y_range=plt1.y_range,
-            x_axis_type="datetime",
-            background_fill_color="#2e2e2e",
+            x_axis_type=bc.AxisTyp.X_DATETIME,
+            background_fill_color=self.__BG_COLOR,
             toolbar_location=None,
         )
         plt2.xaxis.major_label_orientation = pi / 4
         plt2.grid.grid_line_alpha = 0.3
 
-        inc_color = "#e73b3a"
+        # draw Candle Stick (increment)
         plt2.segment(df.index[inc], df[self.__HIGHT][inc], df.index[inc],
                      df[self.__LOW][inc], color=inc_color)
         plt2.vbar(df.index[inc], self.__WIDE, df[self.__OPEN][inc],
                   df[self.__CLOSE][inc], fill_color=inc_color,
                   line_width=1, line_color=inc_color)
 
-        dec_color = "#03c103"
+        # draw Candle Stick (decrement)
         plt2.segment(df.index[dec], df[self.__HIGHT][dec], df.index[dec],
                      df[self.__LOW][dec], color=dec_color)
         plt2.vbar(df.index[dec], self.__WIDE, df[self.__OPEN][dec],
                   df[self.__CLOSE][dec], fill_color=dec_color,
                   line_width=1, line_color=dec_color)
 
-        equ_color = "#ffff00"
+        # draw Candle Stick (equal)
         plt2.segment(df.index[equ], df[self.__HIGHT][equ], df.index[equ],
                      df[self.__LOW][equ], color=equ_color)
         plt2.vbar(df.index[equ], self.__WIDE, df[self.__OPEN][equ],
                   df[self.__CLOSE][equ], fill_color=equ_color,
                   line_width=1, line_color=equ_color)
 
-        range_rool = RangeTool(x_range=plt1.x_range)  # (1) で作成されたRange1dオブジェクト
+        range_rool = RangeTool(x_range=plt1.x_range)
         plt2.add_tools(range_rool)
 
         output_file("candlestick.html", title="candlestick.py example")
@@ -175,7 +192,7 @@ if __name__ == "__main__":
     fmt = '%Y-%m-%dT%H:%M:00.000000Z'
 
     instrument = oc.OANDA_INS.USD_JPY
-    datetime_from = datetime.datetime(year=2018, month=9, day=12, hour=12,
+    datetime_from = datetime.datetime(year=2018, month=9, day=1, hour=12,
                                       minute=0, second=0).strftime(fmt)
     datetime_to = datetime.datetime(year=2018, month=12, day=15, hour=12,
                                     minute=0, second=0).strftime(fmt)
