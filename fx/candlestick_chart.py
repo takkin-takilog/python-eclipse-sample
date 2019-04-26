@@ -12,7 +12,7 @@ import datetime
 from math import pi
 
 from bokeh.layouts import Column
-from bokeh.models import RangeTool, Range1d
+from bokeh.models import RangeTool
 from bokeh.plotting import figure, show, output_file
 from oandapyV20 import API
 from bokehlib import bokeh_common as bc
@@ -185,7 +185,8 @@ class CandleStick(object):
         plt2.add_tools(range_tool)
         plt2.toolbar.active_multi = range_tool
 
-        output_file("candlestick.html", title="candlestick.py example")
+        output_file("candlestick_sample001.html",
+                    title="candlestick.py example")
 
         show(Column(plt1, plt2))    # open a browser
 
