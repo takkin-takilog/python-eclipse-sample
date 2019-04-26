@@ -20,15 +20,15 @@ import pandas as pd
 api = API(access_token=ya.access_token, environment=oc.OANDA_ENV.PRACTICE)
 
 fmt = '%Y-%m-%dT%H:%M:00.000000Z'
+# 2015年9月15日のローソク足情報を取得
 _from = datetime.datetime(year=2015, month=9, day=15,
                           hour=12, minute=0, second=0).strftime(fmt)
 
-# 5分間隔で5000データ
 params = {
     "alignmentTimezone": "Japan",
     'from': _from,
-    "count": 24,
-    "granularity": oc.OANDA_GRN.H1
+    "count": 24,  # 取得数24
+    "granularity": oc.OANDA_GRN.H1  # 1時間足
 }
 
 # APIへ過去データをリクエスト
