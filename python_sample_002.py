@@ -19,29 +19,28 @@ class ClassAddSub(object):
 
     def __init__(self, init=0):
         """コンストラクタ"""
-        self.__mVal = init     # 初期化
+        self.__mTest = init     # 初期化
 
-    def my_add_func(self, val):
+    def my_add_func(self, val=10):
         """加算"""
-        self.__mVal = self.__mVal + val
+        self.__mTest = self.__mTest + val
 
-        return self.__mVal
+        return self.__mTest
 
     def my_sub_func(self, val):
         """減算"""
-        self.__mVal = self.__mVal - val
+        self.__mTest = self.__mTest - val
 
-        return self.__mVal
+        return self.__mTest
 
     def my_print_val(self):
         """表示"""
-        print("value = {0}".format(self.__mVal))
-
-
-clsAddSub02 = ClassAddSub  # ClassAddSubのインスタンス
+        print("value = {0}"   .format(self.__mTest))
 
 
 def func_sample_002():
+
+    clsAddSub02 = ClassAddSub()  # ClassAddSubのインスタンス
 
     clsAddSub02.my_add_func(10)
 
