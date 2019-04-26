@@ -56,9 +56,14 @@ class CandleStick(object):
         self.__SMA2PRD = 20
         self.__SMA3PRD = 75
 
+        # 移動平均線
         self.__SMA1COL = "SMA-" + str(self.__SMA1PRD)
         self.__SMA2COL = "SMA-" + str(self.__SMA2PRD)
         self.__SMA3COL = "SMA-" + str(self.__SMA3PRD)
+
+        # MACD
+        self.__MACD = "MACD"
+        self.__SIGN = "SIGN"
 
         self.__BG_COLOR = "#2e2e2e"
         self.__CND_INC_COLOR = "#e73b3a"
@@ -116,6 +121,13 @@ class CandleStick(object):
         df[self.__SMA3COL] = df[self.__CLOSE].rolling(
             window=self.__SMA3PRD).mean()
 
+        # MACD
+        tmp_df = pd.DataFrame()
+        tmp_df['12 ema'] = df[self.__CLOSE].ewm(span=12).mean()
+        tmp_df['26 ema'] = df[self.__CLOSE].ewm(span=26).mean()
+        df[self.__MACD] = (tmp_df['12 ema'] - tmp_df['26 ema'])
+        df[self.__SIGN] = df[self.__MACD].ewm(span=9).mean()
+
         self.__df = copy.copy(df)
 
     def drawCandleStick(self, fig_width=1000):
@@ -140,7 +152,7 @@ class CandleStick(object):
         fig1_len = int(len(df) * self.__WIDE_SCALE)
         enddt = oc.OandaGrn.offset(df.index[-1], self.__GRANULARITY)
 
-        plt1 = figure(
+        plt_main = figure(
             plot_height=400,
             plot_width=fig_width,
             x_axis_type=bc.AxisTyp.X_DATETIME,
@@ -149,80 +161,98 @@ class CandleStick(object):
             background_fill_color=self.__BG_COLOR,
             title="Candlestick example"
         )
-        plt1.xaxis.major_label_orientation = pi / 4
-        plt1.grid.grid_line_alpha = 0.3
+        plt_main.xaxis.major_label_orientation = pi / 4
+        plt_main.grid.grid_line_alpha = 0.3
 
         # draw Candle Stick (increment)
-        plt1.segment(df.index[inc], df[self.__HIGHT][inc], df.index[inc],
-                     df[self.__LOW][inc], color=inc_color)
-        plt1.vbar(df.index[inc], self.__WIDE, df[self.__OPEN][inc],
-                  df[self.__CLOSE][inc], fill_color=inc_color,
-                  line_width=1, line_color=inc_color)
+        plt_main.segment(df.index[inc], df[self.__HIGHT][inc], df.index[inc],
+                         df[self.__LOW][inc], color=inc_color)
+        plt_main.vbar(df.index[inc], self.__WIDE, df[self.__OPEN][inc],
+                      df[self.__CLOSE][inc], fill_color=inc_color,
+                      line_width=1, line_color=inc_color)
 
         # draw Candle Stick (decrement)
-        plt1.segment(df.index[dec], df[self.__HIGHT][dec], df.index[dec],
-                     df[self.__LOW][dec], color=dec_color)
-        plt1.vbar(df.index[dec], self.__WIDE, df[self.__OPEN][dec],
-                  df[self.__CLOSE][dec], fill_color=dec_color,
-                  line_width=1, line_color=dec_color)
+        plt_main.segment(df.index[dec], df[self.__HIGHT][dec], df.index[dec],
+                         df[self.__LOW][dec], color=dec_color)
+        plt_main.vbar(df.index[dec], self.__WIDE, df[self.__OPEN][dec],
+                      df[self.__CLOSE][dec], fill_color=dec_color,
+                      line_width=1, line_color=dec_color)
 
         # draw Candle Stick (equal)
-        plt1.segment(df.index[equ], df[self.__HIGHT][equ], df.index[equ],
-                     df[self.__LOW][equ], color=equ_color)
-        plt1.vbar(df.index[equ], self.__WIDE, df[self.__OPEN][equ],
-                  df[self.__CLOSE][equ], fill_color=equ_color,
-                  line_width=1, line_color=equ_color)
+        plt_main.segment(df.index[equ], df[self.__HIGHT][equ], df.index[equ],
+                         df[self.__LOW][equ], color=equ_color)
+        plt_main.vbar(df.index[equ], self.__WIDE, df[self.__OPEN][equ],
+                      df[self.__CLOSE][equ], fill_color=equ_color,
+                      line_width=1, line_color=equ_color)
 
         # 移動平均線
-        plt1.line(df.index, df[self.__SMA1COL],
-                  legend=self.__SMA1COL, line_color="white")
-        plt1.line(df.index, df[self.__SMA2COL],
-                  legend=self.__SMA2COL, line_color="yellow")
-        plt1.line(df.index, df[self.__SMA3COL],
-                  legend=self.__SMA3COL, line_color="cyan")
+        plt_main.line(df.index, df[self.__SMA1COL],
+                      legend=self.__SMA1COL, line_color="white")
+        plt_main.line(df.index, df[self.__SMA2COL],
+                      legend=self.__SMA2COL, line_color="yellow")
+        plt_main.line(df.index, df[self.__SMA3COL],
+                      legend=self.__SMA3COL, line_color="cyan")
 
         # --------------- レンジツールfigure ---------------
-        plt2 = figure(
+        plt_rang = figure(
             plot_height=150,
             plot_width=fig_width,
             x_range=(df.index[0], enddt),
-            y_range=plt1.y_range,
+            y_range=plt_main.y_range,
             x_axis_type=bc.AxisTyp.X_DATETIME,
             background_fill_color=self.__BG_COLOR,
             toolbar_location=None,
         )
-        plt2.xaxis.major_label_orientation = pi / 4
-        plt2.grid.grid_line_alpha = 0.3
+        plt_rang.xaxis.major_label_orientation = pi / 4
+        plt_rang.grid.grid_line_alpha = 0.3
 
         # draw Candle Stick (increment)
-        plt2.segment(df.index[inc], df[self.__HIGHT][inc], df.index[inc],
-                     df[self.__LOW][inc], color=inc_color)
-        plt2.vbar(df.index[inc], self.__WIDE, df[self.__OPEN][inc],
-                  df[self.__CLOSE][inc], fill_color=inc_color,
-                  line_width=1, line_color=inc_color)
+        plt_rang.segment(df.index[inc], df[self.__HIGHT][inc], df.index[inc],
+                         df[self.__LOW][inc], color=inc_color)
+        plt_rang.vbar(df.index[inc], self.__WIDE, df[self.__OPEN][inc],
+                      df[self.__CLOSE][inc], fill_color=inc_color,
+                      line_width=1, line_color=inc_color)
 
         # draw Candle Stick (decrement)
-        plt2.segment(df.index[dec], df[self.__HIGHT][dec], df.index[dec],
-                     df[self.__LOW][dec], color=dec_color)
-        plt2.vbar(df.index[dec], self.__WIDE, df[self.__OPEN][dec],
-                  df[self.__CLOSE][dec], fill_color=dec_color,
-                  line_width=1, line_color=dec_color)
+        plt_rang.segment(df.index[dec], df[self.__HIGHT][dec], df.index[dec],
+                         df[self.__LOW][dec], color=dec_color)
+        plt_rang.vbar(df.index[dec], self.__WIDE, df[self.__OPEN][dec],
+                      df[self.__CLOSE][dec], fill_color=dec_color,
+                      line_width=1, line_color=dec_color)
 
         # draw Candle Stick (equal)
-        plt2.segment(df.index[equ], df[self.__HIGHT][equ], df.index[equ],
-                     df[self.__LOW][equ], color=equ_color)
-        plt2.vbar(df.index[equ], self.__WIDE, df[self.__OPEN][equ],
-                  df[self.__CLOSE][equ], fill_color=equ_color,
-                  line_width=1, line_color=equ_color)
+        plt_rang.segment(df.index[equ], df[self.__HIGHT][equ], df.index[equ],
+                         df[self.__LOW][equ], color=equ_color)
+        plt_rang.vbar(df.index[equ], self.__WIDE, df[self.__OPEN][equ],
+                      df[self.__CLOSE][equ], fill_color=equ_color,
+                      line_width=1, line_color=equ_color)
 
-        range_tool = RangeTool(x_range=plt1.x_range)
-        plt2.add_tools(range_tool)
-        plt2.toolbar.active_multi = range_tool
+        # --------------- MACD figure ---------------
+        plt_macd = figure(
+            plot_height=200,
+            plot_width=fig_width,
+            x_axis_type=bc.AxisTyp.X_DATETIME,
+            x_range=(df.index[-fig1_len], enddt),
+            tools=set_tools,
+            background_fill_color=self.__BG_COLOR,
+        )
+
+        # MACD
+        plt_macd.line(df.index, df[self.__MACD],
+                      legend=self.__MACD, line_color="white")
+        plt_macd.line(df.index, df[self.__SIGN],
+                      legend=self.__SIGN, line_color="yellow")
+        plt_macd.grid.grid_line_alpha = 0.3
+
+        # --------------- レンジツール ---------------
+        range_tool = RangeTool(x_range=plt_main.x_range)
+        plt_rang.add_tools(range_tool)
+        plt_rang.toolbar.active_multi = range_tool
 
         output_file("candlestick_sample001.html",
                     title="candlestick.py example")
 
-        show(Column(plt1, plt2))    # open a browser
+        show(Column(plt_main, plt_rang, plt_macd))    # open a browser
 
     def __changeDateTimeFmt(self, dt):
         """"日付フォーマットの変換メソッド
