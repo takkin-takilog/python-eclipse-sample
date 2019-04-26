@@ -11,6 +11,8 @@
 import datetime
 from math import pi
 
+from bokeh.layouts import Column
+from bokeh.models import RangeTool
 from bokeh.plotting import figure, show, output_file
 from oandapyV20 import API
 
@@ -92,36 +94,79 @@ class CandleStick(object):
 
         set_tools = "pan,wheel_zoom,box_zoom,reset,save"
 
-        p = figure(x_axis_type="datetime", tools=set_tools,
-                   background_fill_color="#2e2e2e",
-                   plot_width=1000, title="MSFT Candlestick")
-        p.xaxis.major_label_orientation = pi / 4
-        p.grid.grid_line_alpha = 0.3
+        # --------------- メインfigure ---------------
+        plt1 = figure(
+            plot_width=1000,
+            x_axis_type="datetime",
+            # X値の描画範囲, Range1dオブジェクトが作成される (1)
+            x_range=(df.index[-10], df.index[-1]),
+            tools=set_tools,
+            background_fill_color="#2e2e2e",
+            title="MSFT Candlestick"
+        )
+        plt1.xaxis.major_label_orientation = pi / 4
+        plt1.grid.grid_line_alpha = 0.3
 
         inc_color = "#e73b3a"
-        p.segment(df.index[inc], df[self.__HIGHT][inc], df.index[inc],
-                  df[self.__LOW][inc], color=inc_color)
-        p.vbar(df.index[inc], self.__WIDE, df[self.__OPEN][inc],
-               df[self.__CLOSE][inc], fill_color=inc_color,
-               line_width=1, line_color=inc_color)
+        plt1.segment(df.index[inc], df[self.__HIGHT][inc], df.index[inc],
+                     df[self.__LOW][inc], color=inc_color)
+        plt1.vbar(df.index[inc], self.__WIDE, df[self.__OPEN][inc],
+                  df[self.__CLOSE][inc], fill_color=inc_color,
+                  line_width=1, line_color=inc_color)
 
         dec_color = "#03c103"
-        p.segment(df.index[dec], df[self.__HIGHT][dec], df.index[dec],
-                  df[self.__LOW][dec], color=dec_color)
-        p.vbar(df.index[dec], self.__WIDE, df[self.__OPEN][dec],
-               df[self.__CLOSE][dec], fill_color=dec_color,
-               line_width=1, line_color=dec_color)
+        plt1.segment(df.index[dec], df[self.__HIGHT][dec], df.index[dec],
+                     df[self.__LOW][dec], color=dec_color)
+        plt1.vbar(df.index[dec], self.__WIDE, df[self.__OPEN][dec],
+                  df[self.__CLOSE][dec], fill_color=dec_color,
+                  line_width=1, line_color=dec_color)
 
         equ_color = "#ffff00"
-        p.segment(df.index[equ], df[self.__HIGHT][equ], df.index[equ],
-                  df[self.__LOW][equ], color=equ_color)
-        p.vbar(df.index[equ], self.__WIDE, df[self.__OPEN][equ],
-               df[self.__CLOSE][equ], fill_color=equ_color,
-               line_width=1, line_color=equ_color)
+        plt1.segment(df.index[equ], df[self.__HIGHT][equ], df.index[equ],
+                     df[self.__LOW][equ], color=equ_color)
+        plt1.vbar(df.index[equ], self.__WIDE, df[self.__OPEN][equ],
+                  df[self.__CLOSE][equ], fill_color=equ_color,
+                  line_width=1, line_color=equ_color)
+
+        # --------------- レンジツールfigure ---------------
+        plt2 = figure(
+            plot_height=150,
+            plot_width=plt1.plot_width,
+            y_range=plt1.y_range,
+            x_axis_type="datetime",
+            background_fill_color="#2e2e2e",
+            toolbar_location=None,
+        )
+        plt2.xaxis.major_label_orientation = pi / 4
+        plt2.grid.grid_line_alpha = 0.3
+
+        inc_color = "#e73b3a"
+        plt2.segment(df.index[inc], df[self.__HIGHT][inc], df.index[inc],
+                     df[self.__LOW][inc], color=inc_color)
+        plt2.vbar(df.index[inc], self.__WIDE, df[self.__OPEN][inc],
+                  df[self.__CLOSE][inc], fill_color=inc_color,
+                  line_width=1, line_color=inc_color)
+
+        dec_color = "#03c103"
+        plt2.segment(df.index[dec], df[self.__HIGHT][dec], df.index[dec],
+                     df[self.__LOW][dec], color=dec_color)
+        plt2.vbar(df.index[dec], self.__WIDE, df[self.__OPEN][dec],
+                  df[self.__CLOSE][dec], fill_color=dec_color,
+                  line_width=1, line_color=dec_color)
+
+        equ_color = "#ffff00"
+        plt2.segment(df.index[equ], df[self.__HIGHT][equ], df.index[equ],
+                     df[self.__LOW][equ], color=equ_color)
+        plt2.vbar(df.index[equ], self.__WIDE, df[self.__OPEN][equ],
+                  df[self.__CLOSE][equ], fill_color=equ_color,
+                  line_width=1, line_color=equ_color)
+
+        range_rool = RangeTool(x_range=plt1.x_range)  # (1) で作成されたRange1dオブジェクト
+        plt2.add_tools(range_rool)
 
         output_file("candlestick.html", title="candlestick.py example")
 
-        show(p)  # open a browser
+        show(Column(plt1, plt2))    # open a browser
 
 
 if __name__ == "__main__":
