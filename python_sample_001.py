@@ -17,8 +17,8 @@ if __name__ == '__main__':
 
     ps002.func_sample_002()
 
-    cls = ps002.Class002
+    clsAddSub01 = ps002.ClassAddSub()
 
-    cls.my_add_func(2)     # 加算処理
+    clsAddSub01.my_add_func(2)     # 加算処理
 
-    cls.my_sub_func(1)     # 減算処理
+    clsAddSub01.my_sub_func(1)     # 減算処理

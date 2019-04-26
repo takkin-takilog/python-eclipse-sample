@@ -5,13 +5,17 @@
 # ==============================================================================
 
 
-def func_sample_002():
+class ClassTest(object):
+    """テスト用Class 002"""
 
-    print("func_sample_002")
+    def my_test_print_func(self):
+        print("this is TEST PRINT")
 
 
-class Class002(object):
-    """サンプル用Class 002"""
+class ClassAddSub(object):
+    """加算減算Class 002"""
+
+    my_ct_instance = ClassTest()  # ClassTestのインスタンス
 
     def __init__(self, init=0):
         """コンストラクタ"""
@@ -32,3 +36,13 @@ class Class002(object):
     def my_print_val(self):
         """表示"""
         print("value = {0}".format(self.__mVal))
+
+
+clsAddSub02 = ClassAddSub  # ClassAddSubのインスタンス
+
+
+def func_sample_002():
+
+    clsAddSub02.my_add_func(10)
+
+    print("func_sample_002")
