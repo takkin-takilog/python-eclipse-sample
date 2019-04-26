@@ -203,24 +203,27 @@ class CandleStick(object):
 
         # 移動平均線
         plt_main.line(df.index, df[self.__SMA1COL], line_width=2,
-                      line_color="pink")
+                      line_color="pink", legend=self.__SMA1COL)
         plt_main.line(df.index, df[self.__SMA2COL], line_width=2,
-                      line_color="yellow")
+                      line_color="yellow", legend=self.__SMA2COL)
         plt_main.line(df.index, df[self.__SMA3COL], line_width=2,
-                      line_color="orange")
+                      line_color="orange", legend=self.__SMA3COL)
 
         # ボリンジャーバンド
         bb_width = 1
         plt_main.line(df.index, df[self.__BB_BASE], line_dash="dotted",
-                      line_width=2, line_color="blue")
+                      line_width=2, line_color="blue", legend="base")
         plt_main.line(df.index, df[self.__BB_U_SIGMA], line_dash="dotted",
-                      line_width=bb_width, line_color="deepskyblue")
+                      line_width=bb_width, line_color="deepskyblue",
+                      legend="±1σ")
         plt_main.line(df.index, df[self.__BB_L_SIGMA], line_dash="dotted",
                       line_width=bb_width, line_color="deepskyblue")
         plt_main.line(df.index, df[self.__BB_U_SIGMA2], line_dash="dotted",
-                      line_width=bb_width, line_color="aqua")
+                      line_width=bb_width, line_color="aqua",
+                      legend="±2σ")
         plt_main.line(df.index, df[self.__BB_L_SIGMA2], line_dash="dotted",
                       line_width=bb_width, line_color="aqua")
+        plt_main.legend.location = "top_left"
 
         # --------------- レンジツールfigure ---------------
         plt_rang = figure(
@@ -274,6 +277,7 @@ class CandleStick(object):
         plt_macd.line(df.index, df[self.__SIGN],
                       legend=self.__SIGN, line_color="cyan")
         plt_macd.grid.grid_line_alpha = 0.3
+        plt_macd.legend.location = "top_left"
 
         # --------------- レンジツール ---------------
         range_tool = RangeTool(x_range=plt_main.x_range)
