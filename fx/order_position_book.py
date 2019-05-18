@@ -13,6 +13,7 @@ import datetime
 from bokeh.plotting import figure, show
 from oandapyV20 import API
 from bokeh.layouts import gridplot
+from datetime import timedelta
 
 from bokehlib import bokeh_common as bc
 from fx import oanda_common as oc
@@ -232,8 +233,10 @@ if __name__ == "__main__":
 
     instrument = oc.OandaIns.USD_JPY
 
-    dt = datetime.datetime(year=2017, month=2, day=1,
-                           hour=12, minute=0, second=0)
-    cs.getInstrumentsOrderBook(instrument, dt)
-    cs.getInstrumentsPositionBook(instrument, dt)
+    dt = datetime.datetime(year=2019, month=5, day=18,
+                           hour=21, minute=40, second=0)
+    dttk = dt - timedelta(hours=9)
+
+    cs.getInstrumentsOrderBook(instrument, dttk)
+    cs.getInstrumentsPositionBook(instrument, dttk)
     cs.drawPositionOrderBook(500)
