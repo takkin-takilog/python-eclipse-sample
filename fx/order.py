@@ -10,6 +10,7 @@
 
 import json
 from oandapyV20.endpoints.orders import OrderCreate
+from oandapyV20.endpoints.trades import TradeDetails, TradeClose
 from oandapyV20 import API
 from fx import oanda_common as oc
 from fx import your_account as ya
@@ -90,6 +91,7 @@ class OrderTypeConst():
     FIXED_PRICE = "FIXED_PRICE"
 
 
+"""
 # ========== ex01 ==========
 # 成行注文（買）
 # 注文方法：成行
@@ -97,7 +99,7 @@ class OrderTypeConst():
 # 売買：買い
 # 数量：10000
 # ==========================
-data01 = {
+data = {
     "order": {
         "instrument": "USD_JPY",
         "units": "+10000",
@@ -106,17 +108,33 @@ data01 = {
     }
 }
 
+api = API(access_token=ya.access_token, environment=oc.OandaEnv.PRACTICE)
+r = OrderCreate(ya.account_number, data=data)
+rsp = api.request(r)
+"""
+
+"""
+# ========== ex02 ==========
+# トレードの詳細を取得
+# ==========================
+api = API(access_token=ya.access_token, environment=oc.OandaEnv.PRACTICE)
+r = TradeDetails(ya.account_number, tradeID=13)
+rsp = api.request(r)
+"""
+
+# ========== ex03 ==========
+# トレード・クローズ
+# トレードID：13
+# 数量：5000
+# ==========================
 data = {
-    "order": {
-        "timeInForce": "GTC",
-        "price": "1.6000",
-        "type": "TAKE_PROFIT",
-        "tradeID": "6368"
-    }
+    "units": 5000,
 }
 
 api = API(access_token=ya.access_token, environment=oc.OandaEnv.PRACTICE)
-r = OrderCreate(ya.account_number, data=data01)
+r = TradeClose(ya.account_number, tradeID=13, data=data)
 rsp = api.request(r)
 
+
 print(json.dumps(rsp, indent=2))
+
