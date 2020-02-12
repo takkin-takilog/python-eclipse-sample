@@ -1,6 +1,6 @@
 # ==============================================================================
 # brief        OANDA Order
-#              　注文を出す。
+#              注文する
 #
 # author       たっきん
 #
@@ -8,6 +8,7 @@
 #     oandapyV20のインストール (pip install oandapyV20)
 # ==============================================================================
 
+import json
 from oandapyV20.endpoints.orders import OrderCreate
 from oandapyV20 import API
 from fx import oanda_common as oc
@@ -50,12 +51,12 @@ class OrderTypeConst():
 
     # 指値注文
     # A Limit Order
-    # ※ポジションEntryで使用
+    # ※ポジション・オープンで使用
     LIMIT = "LIMIT"
 
     # 逆指値注文
     # A Stop Order
-    # ※ポジションEntryで使用
+    # ※ポジション・オープンで使用
     STOP = "STOP"
 
     # MIT注文
@@ -69,26 +70,34 @@ class OrderTypeConst():
 
     # 利益確定注文（指値注文）
     # A Take Profit Order
-    # ※ポジションExitで使用
+    # ※ポジション・クローズで使用（オープン時には使用不可）
+    # Note:Cannot be used to opan a new posiition.
     TAKE_PROFIT = "TAKE_PROFIT"
 
     # ストップ注文（逆指値注文）
     # A Stop Loss Order
-    # ※ポジションExitで使用
+    # ※ポジション・クローズで使用（オープン時には使用不可）
+    # Note:Cannot be used to opan a new posiition.
     STOP_LOSS = "STOP_LOSS"
 
     # トレイリング・ストップ・リミット注文
     # A Trailing Stop Loss Order
-    # ※ポジションExitで使用
+    # ※ポジション・クローズで使用（オープン時には使用不可）
+    # Note:Cannot be used to opan a new posiition.
     TRAILING_STOP_LOSS = "TRAILING_STOP_LOSS"
 
     # A Fixed Price Order
     FIXED_PRICE = "FIXED_PRICE"
 
 
-api = API(access_token=ya.access_token, environment=oc.OandaEnv.PRACTICE)
-
-data = {
+# ========== ex01 ==========
+# 成行注文（買）
+# 注文方法：成行
+# 取引通貨：USD/JPY
+# 売買：買い
+# 数量：10000
+# ==========================
+data01 = {
     "order": {
         "instrument": "USD_JPY",
         "units": "+10000",
@@ -106,8 +115,8 @@ data = {
     }
 }
 
+api = API(access_token=ya.access_token, environment=oc.OandaEnv.PRACTICE)
+r = OrderCreate(ya.account_number, data=data01)
+rsp = api.request(r)
 
-#r = OrderCreate(ya.account_number, data=data)
-#res = api.request(r)
-
-#print(res)
+print(json.dumps(rsp, indent=2))
