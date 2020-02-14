@@ -91,7 +91,37 @@ class OrderTypeConst():
     FIXED_PRICE = "FIXED_PRICE"
 
 
-"""
+class OrderPositionFillConst():
+    """
+    # OrderPositionFillConst - ポジション数変更方法定数クラス
+    #
+    #  Specification of how Positions in the Account are modified when the
+    #  Order is filled.
+    """
+    # 新規ポジションを保有する用途のみで使用可。
+    # 両建て可能アカウントの場合、両建てとなる。
+    # 両建て不可アカウントの場合、指定不可。
+    # When the Order is filled, only allow Positions to be opened or extended.
+    OPEN_ONLY = "OPEN_ONLY"
+
+    # ポジションを保有していた場合は優先して減少させる。
+    # 新規ポジションを増やすことは可。
+    # When the Order is filled, always fully reduce an existing Position before
+    # opening a new Position.
+    REDUCE_FIRST = "REDUCE_FIRST"
+
+    # 保有ポジション数を減少させる用途のみで指定可能。
+    # 但し、新規ポジションを増やすことは不可。
+    # When the Order is filled, only reduce an existing Position.
+    REDUCE_ONLY = "REDUCE_ONLY"
+
+    # 両建て不可アカウントの場合、"REDUCE_FIRST"となり、
+    # 両建て可能アカウントの場合、"OPEN_ONLY"となる。
+    # When the Order is filled, use REDUCE_FIRST behaviour for non-client
+    # hedging Accounts, and OPEN_ONLY behaviour for client hedging Accounts.
+    DEFAULT = "DEFAULT"
+
+
 # ========== ex01 ==========
 # 成行注文（買）
 # 注文方法：成行
@@ -102,7 +132,7 @@ class OrderTypeConst():
 data = {
     "order": {
         "instrument": "USD_JPY",
-        "units": "+10000",
+        "units": 10000,
         "type": "MARKET",
         "positionFill": "DEFAULT"
     }
@@ -111,7 +141,6 @@ data = {
 api = API(access_token=ya.access_token, environment=oc.OandaEnv.PRACTICE)
 r = OrderCreate(ya.account_number, data=data)
 rsp = api.request(r)
-"""
 
 """
 # ========== ex02 ==========
@@ -120,7 +149,6 @@ rsp = api.request(r)
 api = API(access_token=ya.access_token, environment=oc.OandaEnv.PRACTICE)
 r = TradeDetails(ya.account_number, tradeID=13)
 rsp = api.request(r)
-"""
 
 # ========== ex03 ==========
 # トレード・クローズ
@@ -134,6 +162,7 @@ data = {
 api = API(access_token=ya.access_token, environment=oc.OandaEnv.PRACTICE)
 r = TradeClose(ya.account_number, tradeID=13, data=data)
 rsp = api.request(r)
+"""
 
 
 print(json.dumps(rsp, indent=2))
