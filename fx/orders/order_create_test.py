@@ -202,20 +202,20 @@ data_st03 = {
     }
 }
 
-# 成行
-#data = data_ma01
-#data = data_ma02
-#data = data_ma03
-# 指値
-#data = data_li01
-#data = data_li02
-#data = data_li03
-# 逆指値
+# ---------- 成行 ----------
+# data = data_ma01
+# data = data_ma02
+# data = data_ma03
+# ---------- 指値 ----------
+# data = data_li01
+# data = data_li02
+# data = data_li03
+# ---------- 逆指値 ----------
 data = data_st01
-#data = data_st02
-#data = data_st03
+# data = data_st02
+# data = data_st03
 
 api = API(access_token=ya.access_token, environment=oc.OandaEnv.PRACTICE)
-r = OrderCreate(ya.account_number, data=data)
-rsp = api.request(r)
+ep = OrderCreate(accountID=ya.account_number, data=data)
+rsp = api.request(ep)
 print(json.dumps(rsp, indent=2))
