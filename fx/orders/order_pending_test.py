@@ -18,9 +18,7 @@ from fx import your_account as ya
 # 保留中となるオーダーを作成しておくこと
 # -----------------------------
 
-order_id = 10  # 作成したオーダーIDを指定
-
 api = API(access_token=ya.access_token, environment=oc.OandaEnv.PRACTICE)
-ep = OrdersPending(accountID=ya.account_number, orderID=order_id)
+ep = OrdersPending(accountID=ya.account_number)
 rsp = api.request(ep)
 print(json.dumps(rsp, indent=2))

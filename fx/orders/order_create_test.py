@@ -202,6 +202,40 @@ data_st03 = {
     }
 }
 
+
+# ========== ex_takeprofit01 ==========
+# 注文方法：決済注文（利益確定）
+# 価格指定：130.000円
+# 有効期間：キャンセルされるまで有効(GTC)
+#
+# ※決済注文するならOrderCreateよりTradeCRCDOをっ使ったほうが良い
+# =====================================
+data_tp01 = {
+    "order": {
+        "timeInForce": "GTC",
+        "price": 130.000,
+        "type": "TAKE_PROFIT",
+        "tradeID": "85",
+    },
+}
+
+# ========== ex_stoploss01 ==========
+# 注文方法：決済注文（ストップ）
+# 価格指定：100.000円
+# 有効期間：キャンセルされるまで有効(GTC)
+#
+# ※決済注文するならOrderCreateよりTradeCRCDOをっ使ったほうが良い
+# ===================================
+data_sl01 = {
+    "order": {
+        "timeInForce": "GTC",
+        "price": 100.000,
+        "type": "STOP_LOSS",
+        "tradeID": "85",
+    },
+}
+
+
 # ---------- 成行 ----------
 # data = data_ma01
 # data = data_ma02
@@ -211,9 +245,13 @@ data_st03 = {
 # data = data_li02
 # data = data_li03
 # ---------- 逆指値 ----------
-data = data_st01
+# data = data_st01
 # data = data_st02
 # data = data_st03
+# ---------- 決済注文（利益確定） ----------
+# data = data_tp01
+# ---------- 決済注文（ストップ） ----------
+data = data_sl01
 
 api = API(access_token=ya.access_token, environment=oc.OandaEnv.PRACTICE)
 ep = OrderCreate(accountID=ya.account_number, data=data)

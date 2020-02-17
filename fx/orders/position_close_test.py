@@ -26,11 +26,13 @@ ep = OpenPositions(accountID=ya.account_number)
 rsp = api.request(ep)
 print(json.dumps(rsp, indent=2))
 
+
 # ポジションをクローズする
 data = {
-    "longUnits": "ALL",
+    "longUnits": "50",
     "shortUnits": "ALL"
-    }
+}
+
 ep = PositionClose(accountID=ya.account_number,
                    instrument="USD_JPY", data=data)
 rsp = api.request(ep)
