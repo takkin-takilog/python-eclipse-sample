@@ -237,7 +237,7 @@ data_sl01 = {
 
 
 # ---------- 成行 ----------
-# data = data_ma01
+data = data_ma01
 # data = data_ma02
 # data = data_ma03
 # ---------- 指値 ----------
@@ -251,7 +251,7 @@ data_sl01 = {
 # ---------- 決済注文（利益確定） ----------
 # data = data_tp01
 # ---------- 決済注文（ストップ） ----------
-data = data_sl01
+# data = data_sl01
 
 api = API(access_token=ya.access_token, environment=oc.OandaEnv.PRACTICE)
 ep = OrderCreate(accountID=ya.account_number, data=data)
