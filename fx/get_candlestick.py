@@ -53,8 +53,9 @@ class CandleStick(object):
 
         TMDLT = datetime.timedelta(hours=9)
 
-        dt_from_str = (dt_from - TMDLT).strftime(self.__DT_FMT)
-        dt_to_str = (dt_to - TMDLT).strftime(self.__DT_FMT)
+        DT_FMT = "%Y-%m-%dT%H:%M:10.000000Z"
+        dt_from_str = (dt_from - TMDLT).strftime(DT_FMT)
+        dt_to_str = (dt_to - TMDLT).strftime(DT_FMT)
 
         print("from: {}" .format(dt_from_str))
         print("to  : {}" .format(dt_to_str))
