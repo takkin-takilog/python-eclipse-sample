@@ -23,6 +23,6 @@ print("----- df(append) -----")
 print(df)
 
 print("----- df(drop) -----")
-droplist = range(0, len(df_add))
-df.drop(df.index[droplist], inplace = True)
+droplist = df.index[range(0, len(df_add))]
+df.drop(droplist, inplace = True)
 print(df)
