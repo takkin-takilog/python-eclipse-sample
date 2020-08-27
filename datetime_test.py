@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta, timezone
 import pandas as pd
-from comtypes.npsupport import numpy as np
+import numpy as np
 
 DT_FMT = "%Y-%m-%dT%H:%M:%S"
 
