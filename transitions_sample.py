@@ -1,14 +1,14 @@
 import sys
 from transitions import Machine, State
-from enum import Enum
+from enum import Enum, auto
 
 
 class Model(object):
 
     class States(Enum):
-        STATE_A = "stateA"
-        STATE_B = "stateB"
-        STATE_C = "stateC"
+        STATE_A = auto()
+        STATE_B = auto()
+        STATE_C = auto()
 
     def __init__(self):
 
