@@ -3,7 +3,6 @@ import os
 import sys
 from enum import Enum, auto
 from transitions.extensions.nesting import NestedState
-from transitions.extensions.states import Timeout, Tags, add_state_features
 from transitions.extensions.factory import HierarchicalGraphMachine
 from transitions import Machine, State
 
