@@ -136,88 +136,88 @@ class Model(object):
             transitions=p_transitions)
 
     def on_enter_waiting(self):
-        print("do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
+        print("  do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
 
     def on_exit_waiting(self):
-        print("do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
+        print("  do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
 
     def on_enter_trading(self):
-        print("do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
+        print("  do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
 
     def on_exit_trading(self):
-        print("do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
+        print("  do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
 
     def on_enter_updating(self):
-        print("do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
+        print("  do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
 
     def on_exit_updating(self):
-        print("do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
+        print("  do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
 
     def on_enter_normal(self):
-        print("do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
+        print("  do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
 
     def on_exit_normal(self):
-        print("do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
+        print("  do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
 
     def on_enter_abnormal(self):
-        print("do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
+        print("  do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
 
     def on_exit_abnormal(self):
-        print("do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
+        print("  do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
 
     def prepare_from_waiting_to_trading(self):
-        print("do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
+        print("  do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
 
     def before_from_waiting_to_trading(self):
-        print("do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
+        print("  do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
 
     def after_from_waiting_to_trading(self):
-        print("do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
+        print("  do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
 
     def prepare_from_trading_to_waiting(self):
-        print("do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
+        print("  do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
 
     def before_from_trading_to_waiting(self):
-        print("do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
+        print("  do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
 
     def after_from_trading_to_waiting(self):
-        print("do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
+        print("  do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
 
     def prepare_from_waiting_to_updating(self):
-        print("do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
+        print("  do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
 
     def before_from_waiting_to_updating(self):
-        print("do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
+        print("  do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
 
     def after_from_waiting_to_updating(self):
-        print("do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
+        print("  do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
 
     def prepare_from_updating_to_waiting(self):
-        print("do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
+        print("  do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
 
     def before_from_updating_to_waiting(self):
-        print("do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
+        print("  do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
 
     def after_from_updating_to_waiting(self):
-        print("do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
+        print("  do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
 
     def prepare_from_normal_to_abnormal(self):
-        print("do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
+        print("  do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
 
     def before_from_normal_to_abnormal(self):
-        print("do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
+        print("  do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
 
     def after_from_normal_to_abnormal(self):
-        print("do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
+        print("  do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
 
     def prepare_from_abnormal_to_normal(self):
-        print("do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
+        print("  do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
 
     def before_from_abnormal_to_normal(self):
-        print("do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
+        print("  do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
 
     def after_from_abnormal_to_normal(self):
-        print("do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
+        print("  do \"{}\" on \"{}\"".format(sys._getframe().f_code.co_name, self.state))
 
     def show(self):
         """
@@ -227,68 +227,76 @@ class Model(object):
         img = Image.open(path + "/" + image_name)
         """
         self._p_machine.get_graph().view()
-        input("Please Enter: ")
 
 
 if __name__ == "__main__":
 
     m = Model()
 
-    print("--- initial ---")
-    print(" state:[{}]".format(m.state))
-    print(" is_normal:[{}]".format(m.is_normal(allow_substates=True)))
+    print("[0]:initial ---------------------------------------------")
+    print("  state:[{}]".format(m.state))
+    print("  is_normal:[{}]".format(m.is_normal(allow_substates=True)))
     m.show()
 
-    print("--- trans_from_normal_to_abnormal ---")
+    print("[1]:trans_from_normal_to_abnormal -----------------------")
+    input("  Please Enter: ")
     m.trans_from_normal_to_abnormal()
-    print(" state:[{}]".format(m.state))
-    print(" is_normal:[{}]".format(m.is_normal(allow_substates=True)))
+    print("  state:[{}]".format(m.state))
+    print("  is_normal:[{}]".format(m.is_normal(allow_substates=True)))
     m.show()
 
-    print("--- trans_from_abnormal_to_normal ---")
+    print("[2]:trans_from_abnormal_to_normal -----------------------")
+    input("  Please Enter: ")
     m.trans_from_abnormal_to_normal()
-    print(" state:[{}]".format(m.state))
-    print(" is_normal:[{}]".format(m.is_normal(allow_substates=True)))
+    print("  state:[{}]".format(m.state))
+    print("  is_normal:[{}]".format(m.is_normal(allow_substates=True)))
     m.show()
 
-    print("--- trans_from_waiting_to_trading ---")
+    print("[3]:trans_from_waiting_to_trading -----------------------")
+    input("  Please Enter: ")
     m.trans_from_waiting_to_trading()
-    print(" state:[{}]".format(m.state))
-    print(" is_normal:[{}]".format(m.is_normal(allow_substates=True)))
+    print("  state:[{}]".format(m.state))
+    print("  is_normal:[{}]".format(m.is_normal(allow_substates=True)))
     m.show()
 
-    print("--- trans_from_trading_to_waiting ---")
+    print("[4]:trans_from_trading_to_waiting -----------------------")
+    input("  Please Enter: ")
     m.trans_from_trading_to_waiting()
-    print(" state:[{}]".format(m.state))
-    print(" is_normal:[{}]".format(m.is_normal(allow_substates=True)))
+    print("  state:[{}]".format(m.state))
+    print("  is_normal:[{}]".format(m.is_normal(allow_substates=True)))
     m.show()
 
-    print("--- trans_from_waiting_to_updating ---")
+    print("[5]:trans_from_waiting_to_updating ----------------------")
+    input("  Please Enter: ")
     m.trans_from_waiting_to_updating()
-    print(" state:[{}]".format(m.state))
-    print(" is_normal:[{}]".format(m.is_normal(allow_substates=True)))
+    print("  state:[{}]".format(m.state))
+    print("  is_normal:[{}]".format(m.is_normal(allow_substates=True)))
     m.show()
 
-    print("--- trans_from_updating_to_waiting ---")
+    print("[6]:trans_from_updating_to_waiting ----------------------")
+    input("  Please Enter: ")
     m.trans_from_updating_to_waiting()
-    print(" state:[{}]".format(m.state))
-    print(" is_normal:[{}]".format(m.is_normal(allow_substates=True)))
+    print("  state:[{}]".format(m.state))
+    print("  is_normal:[{}]".format(m.is_normal(allow_substates=True)))
     m.show()
 
-    print("--- trans_from_waiting_to_trading ---")
+    print("[7]:trans_from_waiting_to_trading -----------------------")
+    input("  Please Enter: ")
     m.trans_from_waiting_to_trading()
-    print(" state:[{}]".format(m.state))
-    print(" is_normal:[{}]".format(m.is_normal(allow_substates=True)))
+    print("  state:[{}]".format(m.state))
+    print("  is_normal:[{}]".format(m.is_normal(allow_substates=True)))
     m.show()
 
-    print("--- trans_from_normal_to_abnormal ---")
+    print("[8]:trans_from_normal_to_abnormal -----------------------")
+    input("  Please Enter: ")
     m.trans_from_normal_to_abnormal()
-    print(" state:[{}]".format(m.state))
-    print(" is_normal:[{}]".format(m.is_normal(allow_substates=True)))
+    print("  state:[{}]".format(m.state))
+    print("  is_normal:[{}]".format(m.is_normal(allow_substates=True)))
     m.show()
 
-    print("--- trans_from_abnormal_to_normal ---")
+    print("[9]:trans_from_abnormal_to_normal -----------------------")
+    input("  Please Enter: ")
     m.trans_from_abnormal_to_normal()
-    print(" state:[{}]".format(m.state))
-    print(" is_normal:[{}]".format(m.is_normal(allow_substates=True)))
+    print("  state:[{}]".format(m.state))
+    print("  is_normal:[{}]".format(m.is_normal(allow_substates=True)))
     m.show()
